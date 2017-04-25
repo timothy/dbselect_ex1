@@ -18,7 +18,7 @@ import java.sql.SQLException;
 public class DBSelect_EX1 {
 
     /**
-     * Output Formatter to show results to the console.
+     * Output formatter to show results of the query to the console.
      *
      * @param title The heading of the table
      * @param resultSet the result set of the query to be displayed
