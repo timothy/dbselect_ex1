@@ -12,13 +12,13 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
- *
+ * Java application that performs the 5 queries on the books database:
  * @author Timothy Bradford
  */
 public class DBSelect_EX1 {
 
     /**
-     * Output Formatter.
+     * Output Formatter to show results to the console.
      *
      * @param title The heading of the table
      * @param resultSet the result set of the query to be displayed
@@ -54,7 +54,7 @@ public class DBSelect_EX1 {
                 = "SELECT * "
                 + "FROM authors";
 
-        //2.Select a specific author and list all books for that author. Include each book’s title, year, and ISBN. Order the information chronologically.
+        //2.Select a specific author (author == 1) and list all books for that author. Include each book’s title, year, and ISBN. Order the information chronologically.
         final String SELECT_QUERY2
                 = "SELECT TITLES.TITLE, TITLES.COPYRIGHT, TITLES.ISBN "
                 + "FROM AUTHORS INNER JOIN AUTHORISBN ON AUTHORS.AUTHORID = AUTHORISBN.AUTHORID "
@@ -71,12 +71,17 @@ public class DBSelect_EX1 {
                 + "ORDER BY a.LASTNAME, a.FIRSTNAME";
 
         //Custom Queries
+        //4.1 Find full name of all authors with the first name Dan
         final String SELECT_QUERY4_1
-                = "SELECT authorID, firstName, lastName "
-                + "FROM authors";
+                = "SELECT a.FIRSTNAME, a.LASTNAME \n"
+                + "FROM DEITEL.AUTHORS as a \n"
+                + "WHERE a.FIRSTNAME = 'Dan'";
+
+        //4.2 Find all full names of all authors who have the last name Deitel
         final String SELECT_QUERY4_2
-                = "SELECT authorID, firstName, lastName "
-                + "FROM authors";
+                = "SELECT a.FIRSTNAME, a.LASTNAME \n"
+                + "FROM DEITEL.AUTHORS as a \n"
+                + "WHERE a.LASTNAME = 'Deitel'";
 
         try (
                 Connection connection = DriverManager.getConnection(
@@ -90,13 +95,13 @@ public class DBSelect_EX1 {
 
             //Print Results
             printTable("1. Select all authors from the Authors table.", resultSet1);
-            printTable("2.Select a specific author and list all books for that author."
+            printTable("2.Select a specific author(author == 1) and list all books for that author."
                     + " \nInclude each book’s title, year, and ISBN."
                     + " \nOrder the information chronologically", resultSet2);
-            printTable("3.Select a specific title and list all authors for that title."
+            printTable("3.Select a specific title(Visual C++...) and list all authors for that title."
                     + " \nOrder the authors alphabetically by last name and then by first name.", resultSet3);
-            printTable("4.1:", resultSet4_1);
-            printTable("4.2:", resultSet4_2);
+            printTable("4.1: Find full names of all authors with the first name Dan", resultSet4_1);
+            printTable("4.2: Find full names of all authors who have the last name Deitel", resultSet4_2);
         } // AutoCloseable objects' close methods are called now  // AutoCloseable objects' close methods are called now 
         catch (SQLException sqlException) {
             sqlException.printStackTrace();
