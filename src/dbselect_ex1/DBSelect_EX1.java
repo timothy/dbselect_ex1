@@ -18,34 +18,28 @@ import java.sql.SQLException;
 public class DBSelect_EX1 {
 
     /**
-     * Output Formatter - abstracted from books original example - with a few edits.
+     * Output Formatter.
      *
      * @param title The heading of the table
      * @param resultSet the result set of the query to be displayed
      * @throws SQLException
      */
     public static void printTable(String title, ResultSet resultSet) throws SQLException {
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int numberOfColumns = metaData.getColumnCount();
-
-        //Header
-        System.out.printf(title + "%n");
-
-        // display the names of the columns in the ResultSet
-        for (int i = 1; i <= numberOfColumns; i++) {
-            System.out.printf("%-8s\t", metaData.getColumnName(i));
-        }
-        System.out.println();
-
-        // display query results
+        System.out.println("--------------------------------------------------------------------------------------------------");
+        System.out.println(title);
+        System.out.println("--------------------------------------------------------------------------------------------------");
+        ResultSetMetaData rsmd = resultSet.getMetaData();
+        int columnsNumber = rsmd.getColumnCount();
         while (resultSet.next()) {
-            for (int i = 1; i <= numberOfColumns; i++) {
-                System.out.printf("%-8s\t", resultSet.getObject(i));
+            for (int i = 1; i <= columnsNumber; i++) {
+                if (i > 1) {
+                    System.out.print(",  ");
+                }
+                String columnValue = resultSet.getString(i);
+                System.out.print(rsmd.getColumnName(i) + ": " + columnValue);
             }
-            System.out.println();
+            System.out.println("");
         }
-
-        System.out.println();
         System.out.println();
     }
 
@@ -54,22 +48,24 @@ public class DBSelect_EX1 {
      */
     public static void main(String[] args) {
         final String DATABASE_URL = "jdbc:derby://localhost:1527/books";
-        
+
         //1.Select all authors from the Authors table.
         final String SELECT_QUERY1
-                = "SELECT authorID, firstName, lastName "
+                = "SELECT * "
                 + "FROM authors";
-        
+
         //2.Select a specific author and list all books for that author. Include each book’s title, year, and ISBN. Order the information chronologically.
         final String SELECT_QUERY2
-                = "SELECT authorID, firstName, lastName "
-                + "FROM authors";
-        
+                = "SELECT TITLES.TITLE, TITLES.COPYRIGHT, TITLES.ISBN "
+                + "FROM AUTHORS INNER JOIN AUTHORISBN ON AUTHORS.AUTHORID = AUTHORISBN.AUTHORID "
+                + "INNER JOIN TITLES ON AUTHORISBN.ISBN = TITLES.ISBN "
+                + "WHERE AUTHORS.AUTHORID = 1 ORDER BY TITLES.COPYRIGHT\n";
+
         //3.Select a specific title and list all authors for that title. Order the authors alphabetically by last name and then by first name.
         final String SELECT_QUERY3
-                = "SELECT authorID, firstName, lastName "
+                = "SELECT * "
                 + "FROM authors";
-        
+
         //Custom Queries
         final String SELECT_QUERY4_1
                 = "SELECT authorID, firstName, lastName "
@@ -81,7 +77,6 @@ public class DBSelect_EX1 {
         try (
                 Connection connection = DriverManager.getConnection(
                         DATABASE_URL, "deitel", "deitel");
-                
                 //Execute Queries
                 ResultSet resultSet1 = connection.createStatement().executeQuery(SELECT_QUERY1);
                 ResultSet resultSet2 = connection.createStatement().executeQuery(SELECT_QUERY2);
