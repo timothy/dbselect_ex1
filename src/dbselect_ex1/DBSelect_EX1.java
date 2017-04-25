@@ -63,8 +63,12 @@ public class DBSelect_EX1 {
 
         //3.Select a specific title and list all authors for that title. Order the authors alphabetically by last name and then by first name.
         final String SELECT_QUERY3
-                = "SELECT * "
-                + "FROM authors";
+                = "SELECT a.FIRSTNAME, a.LASTNAME "
+                + "FROM AUTHORS as a "
+                + "INNER JOIN AUTHORISBN ON a.AUTHORID = AUTHORISBN.AUTHORID "
+                + "INNER JOIN TITLES as t ON AUTHORISBN.ISBN = t.ISBN "
+                + "WHERE t.TITLE = 'Visual C++ How to Program' "
+                + "ORDER BY a.LASTNAME, a.FIRSTNAME";
 
         //Custom Queries
         final String SELECT_QUERY4_1
